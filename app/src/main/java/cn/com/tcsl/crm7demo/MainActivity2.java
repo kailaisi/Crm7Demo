@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,6 @@ public class MainActivity2 extends AppCompatActivity {
                 return true;
             }
         });
-        Gson gson = new Gson();
         mWebView.addJavascriptInterface(new AndroidJavaScript(), "JsCRM7");
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,45 +48,6 @@ public class MainActivity2 extends AppCompatActivity {
             }
         });
         loadurl();
-        String setting1 = "{\n" +
-                "    \"billRealMoney\": 150,\n" +
-                "    \"cardShouldPay\": 100,\n" +
-                "    \"hasOtherReduction\": 0,\n" +
-                "    \"itemList\": [\n" +
-                "        {\n" +
-                "            \"itemClassId\": \"65\",\n" +
-                "            \"code\": \"001001002\",\n" +
-                "            \"name\": \"青岛啤酒\",\n" +
-                "            \"money\": 8,\n" +
-                "            \"count\": 2\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"itemClassId\": \"68\",\n" +
-                "            \"code\": \"001004001\",\n" +
-                "            \"name\": \"可口可乐（瓶）\",\n" +
-                "            \"money\": 4.5,\n" +
-                "            \"count\": 4\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"itemClassList\": [\n" +
-                "        {\n" +
-                "            \"code\": \"65\",\n" +
-                "            \"classCode\": \"001001\",\n" +
-                "            \"className\": \"啤酒\",\n" +
-                "            \"count\": 2,\n" +
-                "            \"money\": 16\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"code\": \"68\",\n" +
-                "            \"classCode\": \"001004\",\n" +
-                "            \"className\": \"饮料\",\n" +
-                "            \"count\": 4,\n" +
-                "            \"money\": 18\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
-        String callbackStr = "javascript:crmPageObj.readMemberPriceSucc(" + setting1 + ");";
-        Log.d(TAG, callbackStr);
     }
 
     private void loadurl() {
@@ -163,11 +124,12 @@ public class MainActivity2 extends AppCompatActivity {
          * 射频卡和磁条卡接口
          */
         @JavascriptInterface
-        public void userMagCard() {
+        public void swipeCard() {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO: 2018/1/8
+                    String callbackStr = "javascript:setCardNo(13622100101);";
+                    mWebView.loadUrl(callbackStr);
                 }
             });
         }
@@ -180,8 +142,21 @@ public class MainActivity2 extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String callbackStr = "javascript:setRequestParam(13622100102);";
+                    String callbackStr = "javascript:setCardNo(13622100102);";
                     mWebView.loadUrl(callbackStr);
+                }
+            });
+        }
+
+        @JavascriptInterface
+        public void preConsumeFun(final String data) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG, data);
+                    ConsumeBean bean = JsonUtils.parseJson(data, new TypeToken<ConsumeBean>() {
+                    });
+                    Log.d(TAG, bean.toString());
                 }
             });
         }
@@ -191,7 +166,7 @@ public class MainActivity2 extends AppCompatActivity {
         CrmItemBean bean = new CrmItemBean();
         bean.setBillRealMoney(20);
         bean.setCardShouldPay(20);
-        bean.setHasOtherReduction(1);
+        bean.setHasOtherReduction(0);
         ArrayList<CrmItemBean.ItemClassListBean> classList = new ArrayList<>();
         CrmItemBean.ItemClassListBean bean1 = new CrmItemBean.ItemClassListBean();
         bean1.setCode("65");

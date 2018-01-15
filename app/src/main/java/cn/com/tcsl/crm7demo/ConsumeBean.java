@@ -1,5 +1,7 @@
 package cn.com.tcsl.crm7demo;
 
+import com.google.gson.annotations.JsonAdapter;
+
 import java.util.ArrayList;
 
 /**
@@ -25,7 +27,8 @@ public class ConsumeBean {
     private int hasOtherReduction;
     private int isMobileIn;
     private String verifyingCode;
-    private ArrayList<ConsumeBean> couponUsed;
+    @JsonAdapter(CoupBeanListAdapter.class)
+    private ArrayList<CoupBean> couponUsedJson;
 
     public String getAccessToken() {
         return accessToken;
@@ -163,14 +166,13 @@ public class ConsumeBean {
         this.verifyingCode = verifyingCode;
     }
 
-    public ArrayList<ConsumeBean> getCouponUsed() {
-        return couponUsed;
+    public ArrayList<CoupBean> getCouponUsedJson() {
+        return couponUsedJson;
     }
 
-    public void setCouponUsed(ArrayList<ConsumeBean> couponUsed) {
-        this.couponUsed = couponUsed;
+    public void setCouponUsedJson(ArrayList<CoupBean> couponUsedJson) {
+        this.couponUsedJson = couponUsedJson;
     }
-
 
     @Override
     public String toString() {
@@ -192,7 +194,7 @@ public class ConsumeBean {
                 ", hasOtherReduction=" + hasOtherReduction +
                 ", isMobileIn=" + isMobileIn +
                 ", verifyingCode='" + verifyingCode + '\'' +
-                ", couponUsed=" + couponUsed +
+                ", couponUsedJson=" + couponUsedJson +
                 '}';
     }
 }
